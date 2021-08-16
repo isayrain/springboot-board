@@ -1,5 +1,6 @@
 package com.rest.api.controller.v1;
 
+import com.rest.api.advice.exception.CUserNotFoundException;
 import com.rest.api.entity.User;
 import com.rest.api.model.response.CommonResult;
 import com.rest.api.model.response.ListResult;
@@ -27,11 +28,12 @@ public class UserController {
         return responseService.getListResult(userJpaRepo.findAll());
     }
 
-    @ApiOperation(value = "회원 단건 조회", notes = "userId로 회원 조회")
-    @GetMapping(value = "/user{msrl}")
-    public SingleResult<User> findUserById(@ApiParam(value = "회원 ID", required = true) @PathVariable long msrl) {
+    @ApiOperation(value = "회원 단건 조회", notes = "회원번호로 회원 조회")
+    @GetMapping(value = "/user/{msrl}")
+    public SingleResult<User> findUserById(@ApiParam(value = "회원ID", required = true) @PathVariable long msrl,
+                                           @ApiParam(value = "언어", defaultValue = "ko") @RequestParam String lang) {
         // 결과데이터가 단일 건인 경우, getSingleResult 이용하여 결과 출력
-        return responseService.getSingleResult(userJpaRepo.findById(msrl).orElse(null));
+        return responseService.getSingleResult(userJpaRepo.findById(msrl).orElseThrow(CUserNotFoundException::new));
     }
 
     @ApiOperation(value = "회원 입력", notes = "회원 입력")
@@ -59,7 +61,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "회원 삭제", notes = "회원번호로 회원 삭제")
-    @PutMapping(value = "/user{msrl}")
+    @PutMapping(value = "/user/{msrl}")
     public CommonResult delete(@ApiParam(value = "회원번호", required = true) @RequestParam long msrl) {
         userJpaRepo.deleteById(msrl);
         // 성공 결과 정보만 필요한 경우, getSuccessResult 이용하여 결과 출력
