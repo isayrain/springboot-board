@@ -6,10 +6,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+/* Applications.java로 대체
 @SpringBootApplication
-public class Applications {
+public class SpringRestApiApplication {
     public static void main(String[] args) {
-        SpringApplication.run(Applications.class, args);
+        SpringApplication.run(SpringRestApiApplication.class, args);
     }
 
     @Bean
@@ -17,3 +18,4 @@ public class Applications {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 }
+*/
