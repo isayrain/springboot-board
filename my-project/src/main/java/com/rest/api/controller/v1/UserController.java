@@ -52,9 +52,11 @@ public class UserController {
     @PutMapping(value = "/user")
     public SingleResult<User> modify(
             @ApiParam(value = "회원번호", required = true) @RequestParam long msrl,
+            @ApiParam(value = "회원ID", required = true) @RequestParam String uid,
             @ApiParam(value = "회원명", required = true) @RequestParam String name) {
         User user = User.builder()
                 .msrl(msrl)
+                .uid(uid)
                 .name(name)
                 .build();
         return responseService.getSingleResult(userJpaRepo.save(user));
@@ -63,7 +65,7 @@ public class UserController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access token", required = true, dataType = "String", paramType = "header")
     })
-    @ApiOperation(value = "회원 삭제", notes = "userId로 회원정보 삭제")
+    @ApiOperation(value = "회원 삭제", notes = "회원번호(msrl)로 회원정보 삭제")
     @GetMapping(value = "/user/{msrl}")
     public CommonResult delete(
             @ApiParam(value = "회원번호", required = true) @PathVariable long msrl) {

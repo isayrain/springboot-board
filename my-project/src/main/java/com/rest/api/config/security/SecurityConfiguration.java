@@ -30,9 +30,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .csrf().disable()  // rest api 이므로 csrf 보안이 필요없으므로 disable
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)  // jwt token으로 인증 - 세션 필요없으므로 인증 안함
                 .and()
-                    .authorizeRequests()
-                    .antMatchers("/*/signin", "/*/signup").permitAll()  // 가입 및 인증주소는 누구나 접근 가능
-                    .antMatchers(HttpMethod.GET, "helloworld/**").permitAll()  // helloworld로 시작하는 GET 요청 리소스는 누구나 접근 가능
+                    .authorizeRequests()  // 아래 request에 대한 사용권한 체크
+                        .antMatchers("/*/signin", "/*/signup").permitAll()  // 가입 및 인증주소는 누구나 접근 가능
+                        .antMatchers(HttpMethod.GET, "/exception/**", "/helloworld/**").permitAll()  // 등록된 GET 요청 리소스는 누구나 접근 가능
+                        .antMatchers("/*/users").hasRole("ADMIN")
+                    .anyRequest().hasRole("USER")  // 그외 나머지 요청은 모두 인증된 회원만 접근 가능
+                .and()
+                    .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .and()
                     .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);  // jwt token 필터를 id/pw 인증 필터 전에 넣는다.
     }
